@@ -1,0 +1,12 @@
+/.git
+/.github
+/build
+/tests
+/.env
+/.env.*
+/phpcs.xml.dist
+/*.zip
+/*.sql
+/*.dump
+/*.bak
+/examples

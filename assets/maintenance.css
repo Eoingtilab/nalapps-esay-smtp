@@ -1,0 +1,42 @@
+/* NalApps Easy SMTP maintenance/update/license additions.
+ * Shared structure, spacing, buttons, panels and controls come from NalApps UI Kit 4.6.0.
+ */
+.nes-license-page,
+.nes-update-page,
+.nes-maintenance-page{margin-top:0!important}
+
+.nes-license-control-row{display:grid;grid-template-columns:repeat(3,max-content);gap:10px;align-items:end;justify-content:start}
+.nes-license-control-row form{margin:0}
+.nes-license-primary-form{display:contents!important}
+.nes-license-key-field{grid-column:1/-1;margin:0 0 0}
+.nes-license-key-field input[type=text]{width:100%;max-width:420px;height:40px}
+.nes-license-primary-form>.button,
+.nes-license-action-form>.button{display:inline-flex;align-items:center;justify-content:center;min-width:148px;height:40px;min-height:40px;padding:0 16px;white-space:nowrap}
+.nes-license-action-form{display:flex;align-items:flex-end}
+
+.nes-version-grid{margin-bottom:16px}
+.nes-version-card{padding:18px;border:1px solid var(--nalapps-line);border-radius:10px;background:#f8fafc}
+.nes-version-card span{display:block;margin-bottom:7px;color:var(--nalapps-muted);font-size:11px;font-weight:600}
+.nes-version-card strong{display:block;color:var(--nalapps-text);font-size:28px;font-weight:700;line-height:1.1;letter-spacing:-.03em}
+.nes-meta-row{display:flex;flex-wrap:wrap;gap:10px 18px;margin:0 0 16px;color:var(--nalapps-muted);font-size:12px}
+.nes-meta-row strong{margin-right:5px;color:#334155}
+.nes-update-actions{margin-top:16px}
+.nes-rollback-card .nalapps-help{margin-top:14px}
+
+.nes-maintenance-page code{display:inline-flex;align-items:center;min-height:40px;max-width:100%;padding:0 10px;border:1px solid var(--nalapps-line);border-radius:8px;background:#f8fafc;color:#334155;overflow-wrap:anywhere}
+.nes-local-backup-row{justify-content:space-between}
+.nes-local-backup-row code{flex:1 1 420px}
+
+@media(max-width:700px){
+	.nes-license-control-row{grid-template-columns:1fr;width:100%}
+	.nes-license-key-field{grid-column:1}
+	.nes-license-key-field input[type=text]{max-width:none}
+	.nes-license-primary-form>.button,
+	.nes-license-action-form,
+	.nes-license-action-form>.button{width:100%}
+}
+
+@media(max-width:900px){
+	.nes-local-backup-row{align-items:stretch}
+	.nes-local-backup-row code{width:100%;flex:0 0 auto;min-height:auto;padding:10px}
+}

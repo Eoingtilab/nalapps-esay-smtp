@@ -1,0 +1,112 @@
+name: NalApps Plugin Quality Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+      - name: Install quality dependencies
+        run: composer update --no-interaction --prefer-dist --no-progress
+      - name: Dependency security audit
+        run: composer audit
+      - name: PHP syntax
+        run: find . -name '*.php' -not -path './vendor/*' -not -path './build/*' -print0 | xargs -0 -r -n1 php -l
+      - name: WordPress Coding Standards
+        run: vendor/bin/phpcs --standard=phpcs.xml.dist
+      - name: Product contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f nalapps-standard-manifest.json
+          test -f includes/class-crypto.php
+          test -f includes/class-smtp.php
+          test -f includes/class-license.php
+          test -f includes/class-update-manager.php
+          test -f includes/class-data-portability.php
+          test -f includes/class-rollback-manager.php
+          test -f includes/class-maintenance.php
+          test -f includes/class-system-status.php
+          test -f includes/class-nalapps-admin-ui.php
+          test -f assets/nalapps-admin-ui.css
+          test -f assets/maintenance.css
+          test -f uninstall.php
+          grep -q '"standard_version": "4.6.0"' nalapps-standard-manifest.json
+          grep -q "OPTION_KEY = 'nalapps_easy_smtp_settings'" includes/class-smtp.php
+          grep -q 'password_enc' includes/class-crypto.php includes/class-smtp.php
+          grep -q 'activate_license' includes/class-license.php
+          grep -q 'check_license' includes/class-license.php
+          grep -q 'deactivate_license' includes/class-license.php
+          grep -q 'nalapps-form-stack' includes/class-license.php
+          grep -q '지금 업데이트' includes/class-update-manager.php
+          grep -q "add_submenu_page( 'nes-easy-smtp-dashboard', '업데이트', '업데이트', 'manage_options'" includes/class-update-manager.php
+          grep -q "current_user_can( 'update_plugins' )" includes/class-update-manager.php
+          if grep -q 'nes_release_rollback' includes/class-update-manager.php; then echo 'rollback controls must not render on Update Center'; exit 1; fi
+          grep -q '버전 롤백' includes/class-maintenance.php
+          grep -q 'nes_release_rollback' includes/class-maintenance.php
+          grep -q 'Rollback_Manager::list_release_versions' includes/class-maintenance.php
+          grep -q 'upgrader_pre_install' includes/class-rollback-manager.php
+          grep -q 'upgrader_process_complete' includes/class-rollback-manager.php
+          grep -q 'restore_activation_after_update' includes/class-rollback-manager.php
+          grep -q 'ACTIVATION_STATE_OPTION' includes/class-rollback-manager.php
+          grep -q 'list_release_versions' includes/class-rollback-manager.php
+          grep -q 'nes_release_rollback' includes/class-rollback-manager.php
+          grep -q 'browser_download_url' includes/class-rollback-manager.php
+          grep -q 'password_enc' includes/class-data-portability.php
+          grep -q "unset( \$settings\['password_enc'\] )" includes/class-data-portability.php
+          grep -q 'nes_export_data' includes/class-data-portability.php
+          grep -q 'nes_import_data' includes/class-data-portability.php
+          grep -q 'nalapps-maintenance-row' includes/class-maintenance.php
+          grep -q 'nalapps-has-global-header' includes/class-license.php
+          grep -q 'nalapps-has-global-header' includes/class-update-manager.php
+          grep -q 'nalapps-has-global-header' includes/class-maintenance.php
+          grep -q 'Canonical NalApps Admin UI adapter' includes/class-nalapps-admin-ui.php
+          grep -q -- '--nalapps-primary:' assets/nalapps-admin-ui.css
+          grep -q -- '.nalapps-panel' assets/nalapps-admin-ui.css
+          grep -q -- '.nalapps-inline-actions' assets/nalapps-admin-ui.css
+          grep -q -- 'flex-wrap:wrap' assets/nalapps-admin-ui.css
+          if grep -q -- 'overflow-x:auto' assets/nalapps-admin-ui.css; then echo 'admin navigation must not create an internal scrollbar'; exit 1; fi
+          grep -q 'nalapps_easy_smtp_settings' uninstall.php
+          grep -q 'delete_all' uninstall.php
+      - name: Public repository safety
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-files | grep -E '(^|/)(\.env|\.env\..+|id_rsa|id_ed25519|.*\.pem|.*\.p12|.*\.pfx|.*\.sql|.*\.dump|.*\.sqlite|.*\.bak)$'; then exit 1; fi
+          if git grep -nEI '(BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|xox[baprs]-[A-Za-z0-9-]{10,})'; then exit 1; fi
+      - name: Version consistency
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(sed -n "s/^ \* Version: \(.*\)\$/\1/p" nalapps-easy-smtp.php | head -n1 | tr -d '\r')"
+          grep -Eq "define\( *'NES_VERSION', *'$version' *\);" nalapps-easy-smtp.php
+          grep -q "Stable tag: $version" readme.txt
+          grep -q '"slug": "nalapps-easy-smtp"' plugin-profile.json
+          grep -q "\"plugin_version\": \"$version\"" plugin-profile.json
+
+  php-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.1', '8.2', '8.3', '8.4', '8.5']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+      - run: find . -name '*.php' -not -path './vendor/*' -not -path './build/*' -print0 | xargs -0 -r -n1 php -l

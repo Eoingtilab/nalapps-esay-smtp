@@ -1,0 +1,98 @@
+/* NalApps Admin UI — refined commercial workspace system */
+body.nalapps-admin-screen {
+	--nalapps-bg:#f5f7fa;
+	--nalapps-panel:#fff;
+	--nalapps-line:#e2e8f0;
+	--nalapps-line-strong:#cbd5e1;
+	--nalapps-text:#172033;
+	--nalapps-muted:#64748b;
+	--nalapps-primary:#2563eb;
+	--nalapps-primary-dark:#1d4ed8;
+	--nalapps-primary-soft:#eff6ff;
+	--nalapps-success:#15803d;
+	--nalapps-warning:#b45309;
+	--nalapps-danger:#b91c1c;
+	--nalapps-radius:12px;
+	--nalapps-shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px rgba(15,23,42,.035);
+	background:var(--nalapps-bg);
+}
+body.nalapps-admin-screen #wpcontent{background:var(--nalapps-bg)}
+body.nalapps-admin-screen #wpbody-content{padding-bottom:48px}
+body.nalapps-admin-screen .nalapps-shell{max-width:1440px;margin:18px 20px 0 2px}
+
+.nalapps-global-nav{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:0 18px;background:#fff;border:1px solid var(--nalapps-line);border-radius:12px;box-shadow:0 1px 2px rgba(15,23,42,.025)}
+.nalapps-brand{display:flex;align-items:center;gap:11px;min-width:220px;padding:11px 0}
+.nalapps-brand__mark{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:9px;background:var(--nalapps-primary);color:#fff}
+.nalapps-brand__mark .dashicons{font-size:21px;width:21px;height:21px}
+.nalapps-brand__text{display:flex;flex-direction:column;line-height:1.18}
+.nalapps-brand__text strong{font-size:14px;color:var(--nalapps-text);font-weight:650}
+.nalapps-brand__text small{margin-top:3px;color:var(--nalapps-muted);font-size:11px}
+.nalapps-nav{display:flex;align-self:stretch;justify-content:flex-end;gap:18px;white-space:nowrap;flex-wrap:wrap;overflow:visible}
+.nalapps-nav a{position:relative;display:flex;align-items:center;padding:0 1px;color:#475569;text-decoration:none;font-weight:550;transition:color .15s ease}
+.nalapps-nav a:hover,.nalapps-nav a:focus{color:var(--nalapps-primary-dark);box-shadow:none;outline:none}
+.nalapps-nav a.is-active{color:var(--nalapps-primary-dark);font-weight:650}
+.nalapps-nav a.is-active:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:var(--nalapps-primary)}
+
+.nalapps-page-header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin:28px 2px 22px;padding:0 2px 19px;border-bottom:1px solid var(--nalapps-line-strong)}
+.nalapps-page-header__copy{min-width:0}
+.nalapps-page-kicker,.nalapps-section-kicker{display:inline-block;margin-bottom:6px;color:var(--nalapps-primary-dark);font-size:10px;font-weight:650;letter-spacing:.11em}
+.nalapps-page-header h1{margin:0;padding:0;color:var(--nalapps-text);font-size:clamp(25px,2.5vw,32px);font-weight:700;letter-spacing:-.03em;line-height:1.2}
+.nalapps-page-header p{max-width:860px;margin:7px 0 0;color:var(--nalapps-muted);font-size:13px;line-height:1.65}
+.nalapps-page-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+
+.nalapps-panel{margin:0 0 16px;padding:22px;border:1px solid var(--nalapps-line);border-radius:var(--nalapps-radius);background:#fff;box-shadow:var(--nalapps-shadow)}
+.nalapps-panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:-2px 0 18px;padding:0 0 14px;border-bottom:1px solid #eef2f7}
+.nalapps-panel-heading h2,.nalapps-panel-heading h3{margin:0;color:var(--nalapps-text);font-size:16px;font-weight:650;letter-spacing:-.015em}
+.nalapps-panel-heading p{margin:5px 0 0;color:var(--nalapps-muted);font-size:12px;line-height:1.55}
+.nalapps-grid{display:grid;gap:16px}.nalapps-grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.nalapps-grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.nalapps-kpi-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:16px}
+.nalapps-kpi-card{padding:18px;border:1px solid var(--nalapps-line);border-radius:11px;background:#fff}
+.nalapps-kpi-label{display:block;color:var(--nalapps-muted);font-size:11px;font-weight:600}.nalapps-kpi-value{display:block;margin:5px 0;color:var(--nalapps-text);font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.03em}.nalapps-kpi-card p{margin:7px 0 0;color:var(--nalapps-muted);font-size:12px;line-height:1.55}
+.nalapps-field label{display:block;margin-bottom:7px;color:#334155;font-weight:600}.nalapps-help{display:block;margin-top:7px;color:var(--nalapps-muted);font-size:12px;line-height:1.55}
+
+.nalapps-notice{margin:0 0 16px;padding:13px 15px;border:1px solid #bfdbfe;border-radius:9px;background:#f8fbff;color:#334e7d;line-height:1.6}.nalapps-notice strong{color:#1e3a8a}.nalapps-notice.is-success{border-color:#bbf7d0;background:#f7fdf8;color:#166534}.nalapps-notice.is-warning{border-color:#fed7aa;background:#fffaf5;color:#9a3412}.nalapps-notice.is-danger{border-color:#fecaca;background:#fff8f8;color:#991b1b}
+.nalapps-danger-zone{border-color:#fecaca;background:#fff}.nalapps-danger-zone .nalapps-panel-heading{border-bottom-color:#fee2e2}.nalapps-danger-zone .nalapps-panel-heading h2{color:var(--nalapps-danger)}
+.nalapps-inline-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.nalapps-stack{display:grid;gap:10px}
+
+.nalapps-toggle-row{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 0}.nalapps-toggle-copy strong{display:block;color:var(--nalapps-text);font-weight:650}.nalapps-toggle-copy span{display:block;margin-top:4px;color:var(--nalapps-muted);font-size:12px;line-height:1.5}
+.nalapps-switch{position:relative;display:inline-block;width:42px;height:24px;flex:0 0 42px}.nalapps-switch input{position:absolute;opacity:0;width:1px;height:1px}.nalapps-switch__track{position:absolute;inset:0;border-radius:999px;background:#cbd5e1;transition:.18s ease}.nalapps-switch__track:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.2);transition:.18s ease}.nalapps-switch input:checked + .nalapps-switch__track{background:var(--nalapps-primary)}.nalapps-switch input:checked + .nalapps-switch__track:before{transform:translateX(18px)}.nalapps-switch input:focus-visible + .nalapps-switch__track{outline:2px solid #93c5fd;outline-offset:2px}
+
+body.nalapps-admin-screen .button,body.nalapps-admin-screen .button-secondary{min-height:36px;padding:3px 13px;border-color:var(--nalapps-line-strong);border-radius:8px;background:#fff;color:#334155;font-weight:550;box-shadow:none}
+body.nalapps-admin-screen .button:hover,body.nalapps-admin-screen .button:focus{border-color:#93b4f7;color:var(--nalapps-primary-dark);background:#f8fbff}
+body.nalapps-admin-screen .button-primary,body.nalapps-admin-screen .button.button-primary,body.nalapps-admin-screen a.button-primary{border-color:var(--nalapps-primary-dark);background:var(--nalapps-primary);color:#fff;box-shadow:none}
+body.nalapps-admin-screen .button-primary:hover,body.nalapps-admin-screen .button-primary:focus{border-color:#1e40af;background:var(--nalapps-primary-dark);color:#fff}
+body.nalapps-admin-screen input[type=text],body.nalapps-admin-screen input[type=password],body.nalapps-admin-screen input[type=email],body.nalapps-admin-screen input[type=url],body.nalapps-admin-screen input[type=number],body.nalapps-admin-screen input[type=date],body.nalapps-admin-screen select,body.nalapps-admin-screen textarea{min-height:40px;border-color:var(--nalapps-line-strong);border-radius:8px;box-shadow:none}
+body.nalapps-admin-screen input:focus,body.nalapps-admin-screen select:focus,body.nalapps-admin-screen textarea:focus{border-color:var(--nalapps-primary);box-shadow:0 0 0 1px var(--nalapps-primary)}
+
+body.nalapps-admin-screen .nalapps-inline-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+body.nalapps-admin-screen .nalapps-inline-actions form{display:flex;align-items:center;gap:10px;margin:0}
+body.nalapps-admin-screen .nalapps-inline-actions .button,body.nalapps-admin-screen .nalapps-page-actions .button{display:inline-flex;align-items:center;justify-content:center;min-width:148px;min-height:40px;height:40px;padding:0 16px;line-height:38px;white-space:nowrap}
+body.nalapps-admin-screen .nalapps-inline-actions select{min-width:180px;min-height:40px;height:40px}
+body.nalapps-admin-screen .nalapps-inline-actions input[type=file]{min-height:40px;max-width:360px;padding:6px 8px;border:1px solid var(--nalapps-line-strong);border-radius:8px;background:#fff}
+body.nalapps-admin-screen .nalapps-form-stack{display:grid;grid-template-columns:1fr;gap:10px;max-width:640px}
+body.nalapps-admin-screen .nalapps-maintenance-row{display:block;width:100%}
+body.nalapps-admin-screen .nalapps-maintenance-row>.nalapps-inline-actions{width:100%}
+body.nalapps-admin-screen .nalapps-has-global-header>.nalapps-local-page-header{display:none}
+
+/* License controls: always loaded on NalApps screens so the license layout does not depend on a WordPress hook suffix. */
+body.nalapps-admin-screen .nes-license-page .nes-license-control-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;align-items:end}
+body.nalapps-admin-screen .nes-license-page .nes-license-control-row form{margin:0}
+body.nalapps-admin-screen .nes-license-page .nes-license-primary-form{display:contents!important}
+body.nalapps-admin-screen .nes-license-page .nes-license-key-field{grid-column:1/-1;margin:0}
+body.nalapps-admin-screen .nes-license-page .nes-license-key-field input[type=text]{width:100%;max-width:none;height:40px}
+body.nalapps-admin-screen .nes-license-page .nes-license-primary-form>.button,
+body.nalapps-admin-screen .nes-license-page .nes-license-action-form>.button{display:flex;align-items:center;justify-content:center;width:100%;min-width:0;height:40px;min-height:40px;padding:0 16px;white-space:nowrap}
+body.nalapps-admin-screen .nes-license-page .nes-license-action-form{display:block;width:100%}
+
+body.nalapps-admin-screen .postbox{border:1px solid var(--nalapps-line);border-radius:11px;background:#fff;box-shadow:var(--nalapps-shadow);overflow:hidden}
+body.nalapps-admin-screen .postbox .postbox-header{position:relative;display:flex;align-items:center;min-height:48px;padding-right:84px;border-bottom:1px solid var(--nalapps-line);background:#fff}
+body.nalapps-admin-screen .postbox .hndle{min-width:0;margin:0;padding:13px 14px;font-size:14px;font-weight:650;color:var(--nalapps-text);line-height:1.4}
+body.nalapps-admin-screen .postbox .handle-actions{position:absolute;top:50%;right:8px;display:flex;align-items:center;transform:translateY(-50%)}
+body.nalapps-admin-screen .postbox .handle-actions button{margin:0;padding:0 4px}
+body.nalapps-admin-screen .wp-list-table{border:1px solid var(--nalapps-line);border-radius:10px;box-shadow:none;overflow:hidden}
+body.nalapps-admin-screen .wp-list-table thead th,body.nalapps-admin-screen .wp-list-table thead td{background:#f8fafc;border-bottom:1px solid var(--nalapps-line);font-weight:600}
+body.nalapps-admin-screen .wp-list-table tbody tr:hover td,body.nalapps-admin-screen .wp-list-table tbody tr:hover th{background:#fbfdff}
+
+@media(max-width:1100px){.nalapps-kpi-grid,.nalapps-grid-3,.nalapps-grid-2{grid-template-columns:1fr}.nalapps-global-nav{align-items:flex-start}.nalapps-nav{gap:10px 16px}}
+@media(max-width:900px){body.nalapps-admin-screen .nalapps-global-nav{align-items:flex-start;flex-direction:column;padding-bottom:10px}.nalapps-nav{width:100%;min-height:44px;justify-content:flex-start}.nalapps-page-header{align-items:flex-start;flex-direction:column}.nalapps-page-actions{width:100%}.nalapps-shell{margin-right:12px!important}body.nalapps-admin-screen .nalapps-inline-actions,body.nalapps-admin-screen .nalapps-inline-actions form{align-items:stretch;flex-direction:column;width:100%}body.nalapps-admin-screen .nalapps-inline-actions .button,body.nalapps-admin-screen .nalapps-page-actions .button,body.nalapps-admin-screen .nalapps-inline-actions select,body.nalapps-admin-screen .nalapps-inline-actions input[type=file]{width:100%;max-width:none}}
+@media(max-width:700px){body.nalapps-admin-screen .nes-license-page .nes-license-control-row{grid-template-columns:1fr}}

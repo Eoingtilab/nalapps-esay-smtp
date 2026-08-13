@@ -1,0 +1,40 @@
+/* NalApps Easy SMTP — NalApps UI Kit v4.6.0 Typography */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+
+body.nalapps-admin-screen,
+body.nalapps-admin-screen button,
+body.nalapps-admin-screen input,
+body.nalapps-admin-screen select,
+body.nalapps-admin-screen textarea,
+body.nalapps-admin-screen .button {
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,Roboto,"Helvetica Neue","Segoe UI","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
+  font-weight:400;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+.nalapps-brand__text strong{font-weight:650}
+.nalapps-nav a{font-weight:550}
+.nalapps-nav a.is-active{font-weight:600}
+.nalapps-page-kicker{font-weight:650}
+.nalapps-page-header h1{font-weight:700;letter-spacing:-.025em}
+
+body.nalapps-admin-screen .button,
+body.nalapps-admin-screen .button-secondary,
+body.nalapps-admin-screen .button-primary{font-weight:550}
+
+body.nalapps-admin-screen .postbox .hndle{font-weight:650}
+
+body.nalapps-admin-screen .wp-list-table thead th,
+body.nalapps-admin-screen .wp-list-table thead td{font-weight:600}
+body.nalapps-admin-screen .wp-list-table tbody th,
+body.nalapps-admin-screen .wp-list-table tbody td{font-weight:400}
+
+body.nalapps-admin-screen strong,
+body.nalapps-admin-screen b{font-weight:600}
+body.nalapps-admin-screen p,
+body.nalapps-admin-screen li,
+body.nalapps-admin-screen td,
+body.nalapps-admin-screen input,
+body.nalapps-admin-screen select,
+body.nalapps-admin-screen textarea{font-weight:400}

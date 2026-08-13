@@ -1,0 +1,251 @@
+name: Validate and Build Plugin Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'nalapps-easy-smtp.php'
+      - 'readme.txt'
+      - 'plugin-profile.json'
+      - 'nalapps-standard-manifest.json'
+      - '.github/workflows/release.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nalapps-easy-smtp-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read version and release asset state
+        id: version
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version="$(sed -n "s/^ \* Version: \(.*\)\$/\1/p" nalapps-easy-smtp.php | head -n1 | tr -d '\r')"
+          test -n "$version"
+          tag="v$version"
+          zip_name="nalapps-easy-smtp-$version.zip"
+          sha_name="$zip_name.sha256"
+          if git rev-parse "$tag" >/dev/null 2>&1; then tag_exists=true; else tag_exists=false; fi
+          if gh release view "$tag" >/dev/null 2>&1; then
+            release_exists=true
+            assets="$(gh release view "$tag" --json assets --jq '.assets[].name' 2>/dev/null || true)"
+          else
+            release_exists=false
+            assets=""
+          fi
+          if printf '%s\n' "$assets" | grep -Fxq "$zip_name"; then zip_exists=true; else zip_exists=false; fi
+          if printf '%s\n' "$assets" | grep -Fxq "$sha_name"; then sha_exists=true; else sha_exists=false; fi
+          if [ "$release_exists" = true ] && [ "$zip_exists" = true ] && [ "$sha_exists" = true ]; then needs_assets=false; else needs_assets=true; fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "zip_name=$zip_name" >> "$GITHUB_OUTPUT"
+          echo "sha_name=$sha_name" >> "$GITHUB_OUTPUT"
+          echo "tag_exists=$tag_exists" >> "$GITHUB_OUTPUT"
+          echo "release_exists=$release_exists" >> "$GITHUB_OUTPUT"
+          echo "zip_exists=$zip_exists" >> "$GITHUB_OUTPUT"
+          echo "sha_exists=$sha_exists" >> "$GITHUB_OUTPUT"
+          echo "needs_assets=$needs_assets" >> "$GITHUB_OUTPUT"
+
+      - name: Existing release assets are immutable
+        if: steps.version.outputs.needs_assets != 'true'
+        run: echo "${{ steps.version.outputs.tag }} already has the verified ZIP and SHA256 assets; no rebuild or overwrite is allowed."
+
+      - name: Pin build source to existing tag
+        if: steps.version.outputs.needs_assets == 'true' && steps.version.outputs.tag_exists == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout --detach "${{ steps.version.outputs.tag }}"
+          test "$(sed -n "s/^ \* Version: \(.*\)\$/\1/p" nalapps-easy-smtp.php | head -n1 | tr -d '\r')" = "${{ steps.version.outputs.version }}"
+
+      - uses: shivammathur/setup-php@v2
+        if: steps.version.outputs.needs_assets == 'true'
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+
+      - name: Install quality dependencies and audit
+        if: steps.version.outputs.needs_assets == 'true'
+        run: |
+          composer update --no-interaction --prefer-dist --no-progress
+          composer audit
+
+      - name: Validate source and version contract
+        if: steps.version.outputs.needs_assets == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          find . -name '*.php' -not -path './vendor/*' -not -path './build/*' -print0 | xargs -0 -r -n1 php -l
+          vendor/bin/phpcs --standard=phpcs.xml.dist
+          version="${{ steps.version.outputs.version }}"
+          grep -Eq "define\( *'NES_VERSION', *'$version' *\);" nalapps-easy-smtp.php
+          grep -Eq "define\( *'NES_STANDARD_VERSION', *'4\.6\.0' *\);" nalapps-easy-smtp.php
+          grep -q "Stable tag: $version" readme.txt
+          grep -q "\"plugin_version\": \"$version\"" plugin-profile.json
+          grep -q '"standard_version": "4.6.0"' nalapps-standard-manifest.json
+          grep -q "OPTION_KEY = 'nalapps_easy_smtp_settings'" includes/class-smtp.php
+          grep -q 'activate_license' includes/class-license.php
+          grep -q 'nalapps-form-stack' includes/class-license.php
+          grep -q '지금 업데이트' includes/class-update-manager.php
+          if grep -q 'nes_release_rollback' includes/class-update-manager.php; then echo 'rollback controls must not render on Update Center'; exit 1; fi
+          grep -q '버전 롤백' includes/class-maintenance.php
+          grep -q 'Rollback_Manager::list_release_versions' includes/class-maintenance.php
+          grep -q 'nes_release_rollback' includes/class-maintenance.php
+          grep -q 'upgrader_pre_install' includes/class-rollback-manager.php
+          grep -q 'upgrader_process_complete' includes/class-rollback-manager.php
+          grep -q 'restore_activation_after_update' includes/class-rollback-manager.php
+          grep -q 'ACTIVATION_STATE_OPTION' includes/class-rollback-manager.php
+          grep -q 'list_release_versions' includes/class-rollback-manager.php
+          grep -q 'nes_release_rollback' includes/class-rollback-manager.php
+          grep -q 'browser_download_url' includes/class-rollback-manager.php
+          grep -q "unset( \$settings\['password_enc'\] )" includes/class-data-portability.php
+          grep -q 'nes_export_data' includes/class-data-portability.php
+          grep -q 'nalapps-maintenance-row' includes/class-maintenance.php
+          grep -q 'Canonical NalApps Admin UI adapter' includes/class-nalapps-admin-ui.php
+          grep -q 'delete_all' uninstall.php
+          test -f assets/nalapps-admin-ui.css
+          grep -q -- '--nalapps-primary:' assets/nalapps-admin-ui.css
+          grep -q -- '.nalapps-panel' assets/nalapps-admin-ui.css
+          grep -q -- '.nalapps-inline-actions' assets/nalapps-admin-ui.css
+          grep -q -- 'flex-wrap:wrap' assets/nalapps-admin-ui.css
+          if grep -q -- 'overflow-x:auto' assets/nalapps-admin-ui.css; then echo 'admin navigation must not create an internal scrollbar'; exit 1; fi
+
+      - name: Prepare production dependencies
+        if: steps.version.outputs.needs_assets == 'true'
+        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress
+
+      - name: Build immutable distribution
+        if: steps.version.outputs.needs_assets == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${{ steps.version.outputs.version }}"
+          rm -rf build
+          mkdir -p build/nalapps-easy-smtp
+          rsync -a ./ build/nalapps-easy-smtp/ \
+            --exclude '.git/' --exclude '.github/' --exclude 'build/' --exclude 'tests/' \
+            --exclude '*.zip' --exclude 'phpcs.xml.dist'
+          test -f build/nalapps-easy-smtp/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sdk.php
+          test -f build/nalapps-easy-smtp/includes/class-license.php
+          test -f build/nalapps-easy-smtp/includes/class-maintenance.php
+          test -f build/nalapps-easy-smtp/includes/class-data-portability.php
+          test -f build/nalapps-easy-smtp/includes/class-rollback-manager.php
+          test -f build/nalapps-easy-smtp/includes/class-nalapps-admin-ui.php
+          test -f build/nalapps-easy-smtp/assets/nalapps-admin-ui.css
+          test -f build/nalapps-easy-smtp/uninstall.php
+          cd build
+          zip -qr "nalapps-easy-smtp-$version.zip" nalapps-easy-smtp
+          test "$(unzip -Z1 "nalapps-easy-smtp-$version.zip" | head -n1)" = 'nalapps-easy-smtp/'
+          test "$(unzip -Z1 "nalapps-easy-smtp-$version.zip" | grep -E '^nalapps-easy-smtp/nalapps-easy-smtp\.php$' | wc -l)" -eq 1
+          sha256sum "nalapps-easy-smtp-$version.zip" > "nalapps-easy-smtp-$version.zip.sha256"
+
+      - name: Create immutable tag after validation
+        if: steps.version.outputs.needs_assets == 'true' && steps.version.outputs.tag_exists != 'true'
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git tag -a "$TAG" -m "NalApps Easy SMTP $TAG"
+          git push origin "$TAG"
+
+      - name: Create release or backfill missing immutable assets
+        if: steps.version.outputs.needs_assets == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version="${{ steps.version.outputs.version }}"
+          tag="${{ steps.version.outputs.tag }}"
+          zip_path="build/nalapps-easy-smtp-$version.zip"
+          sha_path="$zip_path.sha256"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            gh release create "$tag" --title "NalApps Easy SMTP v$version" --generate-notes
+          fi
+          upload_if_missing() {
+            file="$1"
+            name="$(basename "$file")"
+            assets="$(gh release view "$tag" --json assets --jq '.assets[].name' 2>/dev/null || true)"
+            if printf '%s\n' "$assets" | grep -Fxq "$name"; then return 0; fi
+            if ! gh release upload "$tag" "$file"; then
+              assets="$(gh release view "$tag" --json assets --jq '.assets[].name' 2>/dev/null || true)"
+              printf '%s\n' "$assets" | grep -Fxq "$name"
+            fi
+          }
+          upload_if_missing "$zip_path"
+          upload_if_missing "$sha_path"
+
+      - name: Verify published release assets
+        id: verify_release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${{ steps.version.outputs.tag }}"
+          zip_name="${{ steps.version.outputs.zip_name }}"
+          sha_name="${{ steps.version.outputs.sha_name }}"
+          release_json="$(gh release view "$tag" --json url,assets)"
+          release_url="$(printf '%s' "$release_json" | jq -r '.url')"
+          assets="$(printf '%s' "$release_json" | jq -r '.assets[].name')"
+          printf '%s\n' "$assets" | grep -Fxq "$zip_name"
+          printf '%s\n' "$assets" | grep -Fxq "$sha_name"
+          echo "release_url=$release_url" >> "$GITHUB_OUTPUT"
+
+      - name: Record verified release state
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version="${{ steps.version.outputs.version }}"
+          tag="${{ steps.version.outputs.tag }}"
+          zip_name="${{ steps.version.outputs.zip_name }}"
+          sha_name="${{ steps.version.outputs.sha_name }}"
+          release_url="${{ steps.verify_release.outputs.release_url }}"
+          git fetch origin main
+          git checkout -B main origin/main
+          mkdir -p .release-status
+          cat > ".release-status/v$version.json" <<EOF
+          {
+            "version": "$version",
+            "tag": "$tag",
+            "release_verified": true,
+            "release_url": "$release_url",
+            "install_asset": "$zip_name",
+            "checksum_asset": "$sha_name"
+          }
+          EOF
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add ".release-status/v$version.json"
+          if ! git diff --cached --quiet; then
+            git commit -m "Record verified release $tag"
+            git push origin main
+          fi
+
+      - name: Upload verified install package
+        if: steps.version.outputs.needs_assets == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nalapps-easy-smtp-${{ steps.version.outputs.version }}-install-package
+          path: |
+            build/nalapps-easy-smtp-${{ steps.version.outputs.version }}.zip
+            build/nalapps-easy-smtp-${{ steps.version.outputs.version }}.zip.sha256
+          if-no-files-found: error
