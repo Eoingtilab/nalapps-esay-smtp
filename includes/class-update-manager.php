@@ -5,10 +5,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/** Hybrid updater for NalApps Easy SMTP. */
+/**
+ * Updater for a free product: checks the public GitHub Releases API for the
+ * latest verified version and installs the matching immutable ZIP asset.
+ * No license key is required.
+ */
 class Update_Manager {
-	const CACHE_KEY = 'nes_edd_version_info';
-	const CACHE_TTL = 6 * HOUR_IN_SECONDS;
+	const CACHE_KEY   = 'nes_github_version_info';
+	const CACHE_TTL   = 6 * HOUR_IN_SECONDS;
+	const RELEASES_API = 'https://api.github.com/repos/Eoingtilab/nalapps-esay-smtp/releases/latest';
 
 	public function __construct() {
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'inject_wordpress_update' ) );
@@ -57,10 +62,8 @@ class Update_Manager {
 		$error          = is_wp_error( $info ) ? $info->get_error_message() : '';
 		$latest         = ( ! $error && ! empty( $info['new_version'] ) ) ? (string) $info['new_version'] : '확인할 수 없음';
 		$available      = ! $error && $this->has_newer_version( $info );
-		$license_status = $this->get_license_status();
-		$license_valid  = in_array( $license_status, array( 'valid', 'active' ), true );
 		$package        = ! $error ? $this->get_package_url( $info ) : '';
-		$download_ready = $available && $license_valid && '' !== $package && current_user_can( 'update_plugins' );
+		$download_ready = $available && '' !== $package && current_user_can( 'update_plugins' );
 		$last_checked   = get_option( 'nes_update_last_checked', '' );
 		?>
 		<div class="wrap nalapps-shell nes-update-page nalapps-has-global-header">
@@ -68,7 +71,7 @@ class Update_Manager {
 				<div class="nalapps-panel-heading">
 					<div>
 						<h2>제품 업데이트</h2>
-						<p>EDD 업데이트 서버와 설치 버전을 비교하고 검증된 패키지로 업데이트합니다. 실제 실행 직전 현재 코드와 데이터는 자동 백업됩니다.</p>
+						<p>GitHub Release와 설치 버전을 비교합니다. 무료 제품이라 라이선스 확인 없이 바로 설치할 수 있으며, 실제 실행 직전 현재 코드와 데이터는 자동 백업됩니다.</p>
 					</div>
 				</div>
 
@@ -78,7 +81,7 @@ class Update_Manager {
 				</div>
 
 				<div class="nes-meta-row">
-					<span><strong>라이선스</strong> <?php echo esc_html( $license_valid ? '활성화됨' : $license_status ); ?></span>
+					<span><strong>라이선스</strong> 무료 (자동 활성)</span>
 					<?php if ( $last_checked ) : ?>
 						<span><strong>마지막 확인</strong> <?php echo esc_html( $last_checked ); ?></span>
 					<?php endif; ?>
@@ -90,10 +93,8 @@ class Update_Manager {
 					<div class="nalapps-notice is-warning">새 버전 <?php echo esc_html( $latest ); ?>이 있지만 현재 계정에는 플러그인 업데이트 실행 권한이 없습니다.</div>
 				<?php elseif ( $download_ready ) : ?>
 					<div class="nalapps-notice"><strong><?php echo esc_html( $latest ); ?></strong> 업데이트가 준비되었습니다.</div>
-				<?php elseif ( $available && ! $license_valid ) : ?>
-					<div class="nalapps-notice is-warning">새 버전 <?php echo esc_html( $latest ); ?>이 있지만 업데이트 설치를 위해 라이선스 활성화가 필요합니다.</div>
 				<?php elseif ( $available && '' === $package ) : ?>
-					<div class="nalapps-notice is-danger">새 버전은 확인됐지만 설치 패키지 URL을 받지 못했습니다. EDD Update File 연결을 확인하세요.</div>
+					<div class="nalapps-notice is-danger">새 버전은 확인됐지만 설치 패키지 URL을 받지 못했습니다. GitHub Release 자산을 확인하세요.</div>
 				<?php else : ?>
 					<div class="nalapps-notice is-success">현재 최신 버전을 사용 중입니다.</div>
 				<?php endif; ?>
@@ -108,7 +109,7 @@ class Update_Manager {
 						<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 							<input type="hidden" name="action" value="nes_install_update">
 							<?php wp_nonce_field( 'nes_install_update' ); ?>
-							<button type="submit" class="button button-primary" onclick="return confirm('업데이트 직전 현재 코드와 데이터를 자동 백업한 후 <?php echo esc_js( $latest ); ?> 버전으로 업데이트합니다. 계속하시겠습니까?');"><?php echo esc_html( $latest ); ?>로 지금 업데이트</button>
+							<button type="submit" class="button button-primary" onclick="return confirm('업데이트 직전 현재 코드와 데이터를 자동 백업한 후 <?php echo esc_js( $latest ); ?> 버전으로 업데이트합니다. 계속하시겠습니까?');">지금 업데이트</button>
 						</form>
 					<?php elseif ( ! $available && ! $error ) : ?>
 						<button type="button" class="button" disabled>최신 버전 사용 중</button>
@@ -138,10 +139,6 @@ class Update_Manager {
 			wp_die( '권한이 없습니다.' );
 		}
 		check_admin_referer( 'nes_install_update' );
-		if ( ! in_array( $this->get_license_status(), array( 'valid', 'active' ), true ) ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=nes-update&license_required=1' ) );
-			exit;
-		}
 		$info    = $this->get_remote_version( true );
 		$package = ! is_wp_error( $info ) ? $this->get_package_url( $info ) : '';
 		if ( is_wp_error( $info ) || ! $this->has_newer_version( $info ) || '' === $package ) {
@@ -193,23 +190,13 @@ class Update_Manager {
 				return $cached;
 			}
 		}
-		$params  = array(
-			'edd_action'  => 'get_version',
-			'item_id'     => NES_EDD_ITEM_ID,
-			'url'         => home_url(),
-			'php_version' => PHP_VERSION,
-			'wp_version'  => get_bloginfo( 'version' ),
-		);
-		$license = trim( (string) get_option( License::SDK_KEY_OPTION, '' ) );
-		if ( '' !== $license ) {
-			$params['license'] = $license;
-		}
 		$response = wp_remote_get(
-			add_query_arg( $params, NES_STORE_URL ),
+			self::RELEASES_API,
 			array(
 				'timeout'     => 15,
 				'sslverify'   => true,
 				'redirection' => 3,
+				'headers'     => array( 'Accept' => 'application/vnd.github+json' ),
 			)
 		);
 		update_option( 'nes_update_last_checked', current_time( 'mysql' ), false );
@@ -218,57 +205,44 @@ class Update_Manager {
 		}
 		$code = wp_remote_retrieve_response_code( $response );
 		if ( 200 > $code || 300 <= $code ) {
-			return new \WP_Error( 'nes_update_http', '업데이트 서버가 정상 응답하지 않았습니다.', array( 'status' => $code ) );
+			return new \WP_Error( 'nes_update_http', 'GitHub Release 정보를 가져오지 못했습니다.', array( 'status' => $code ) );
 		}
-		$data = json_decode( wp_remote_retrieve_body( $response ), true );
-		if ( ! is_array( $data ) ) {
-			return new \WP_Error( 'nes_update_json', '업데이트 서버 응답을 해석할 수 없습니다.' );
+		$release = json_decode( wp_remote_retrieve_body( $response ), true );
+		if ( ! is_array( $release ) || empty( $release['tag_name'] ) ) {
+			return new \WP_Error( 'nes_update_json', 'GitHub Release 응답을 해석할 수 없습니다.' );
 		}
-		if ( ! empty( $data['error'] ) ) {
-			$message = ! empty( $data['msg'] ) ? (string) $data['msg'] : '업데이트 정보를 가져오지 못했습니다.';
-			return new \WP_Error( 'nes_update_api', $message );
+
+		$version = ltrim( sanitize_text_field( (string) $release['tag_name'] ), 'vV' );
+		$package = '';
+		$expected_asset = 'nalapps-easy-smtp-' . $version . '.zip';
+		if ( ! empty( $release['assets'] ) && is_array( $release['assets'] ) ) {
+			foreach ( $release['assets'] as $asset ) {
+				if ( isset( $asset['name'], $asset['browser_download_url'] ) && $expected_asset === $asset['name'] ) {
+					$package = esc_url_raw( (string) $asset['browser_download_url'] );
+					break;
+				}
+			}
 		}
-		$data = $this->normalize_remote_info( $data );
+
+		$data = array(
+			'new_version' => $version,
+			'package'     => $package,
+			'url'         => ! empty( $release['html_url'] ) ? esc_url_raw( (string) $release['html_url'] ) : NES_STORE_URL,
+		);
 		set_transient( self::CACHE_KEY, $data, self::CACHE_TTL );
 		return $data;
 	}
 
-	private function normalize_remote_info( $info ) {
-		if ( ! is_array( $info ) ) {
-			return array();
-		}
-		$package = '';
-		if ( ! empty( $info['package'] ) ) {
-			$package = esc_url_raw( (string) $info['package'] );
-		} elseif ( ! empty( $info['download_link'] ) ) {
-			$package = esc_url_raw( (string) $info['download_link'] );
-		}
-		$info['package'] = $package;
-		if ( empty( $info['download_link'] ) && '' !== $package ) {
-			$info['download_link'] = $package;
-		}
-		return $info;
-	}
-
 	private function get_package_url( $info ) {
-		if ( ! is_array( $info ) ) {
-			return '';
-		}
-		if ( ! empty( $info['package'] ) ) {
-			return esc_url_raw( (string) $info['package'] );
-		}
-		if ( ! empty( $info['download_link'] ) ) {
-			return esc_url_raw( (string) $info['download_link'] );
-		}
-		return '';
+		return is_array( $info ) && ! empty( $info['package'] ) ? esc_url_raw( (string) $info['package'] ) : '';
 	}
 
 	private function has_newer_version( $info ) {
-		return is_array( $info ) && ! empty( $info['new_version'] ) && false !== $info['new_version'] && version_compare( (string) $info['new_version'], NES_VERSION, '>' );
+		return is_array( $info ) && ! empty( $info['new_version'] ) && version_compare( (string) $info['new_version'], NES_VERSION, '>' );
 	}
 
 	private function build_update_object( $info, $plugin ) {
-		$update = array(
+		return (object) array(
 			'id'          => 'nalapps-easy-smtp',
 			'slug'        => dirname( $plugin ),
 			'plugin'      => $plugin,
@@ -276,28 +250,5 @@ class Update_Manager {
 			'url'         => ! empty( $info['url'] ) ? esc_url_raw( (string) $info['url'] ) : NES_STORE_URL,
 			'package'     => $this->get_package_url( $info ),
 		);
-		foreach ( array( 'tested', 'requires', 'requires_php' ) as $field ) {
-			if ( isset( $info[ $field ] ) ) {
-				$update[ $field ] = sanitize_text_field( (string) $info[ $field ] );
-			}
-		}
-		if ( isset( $info['icons'] ) && is_array( $info['icons'] ) ) {
-			$update['icons'] = $info['icons'];
-		}
-		if ( isset( $info['banners'] ) && is_array( $info['banners'] ) ) {
-			$update['banners'] = $info['banners'];
-		}
-		return (object) $update;
-	}
-
-	private function get_license_status() {
-		$data = get_option( License::SDK_STATUS_OPTION );
-		if ( is_object( $data ) && isset( $data->license ) ) {
-			return sanitize_key( (string) $data->license );
-		}
-		if ( is_array( $data ) && isset( $data['license'] ) ) {
-			return sanitize_key( (string) $data['license'] );
-		}
-		return 'inactive';
 	}
 }

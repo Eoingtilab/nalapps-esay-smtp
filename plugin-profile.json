@@ -1,11 +1,11 @@
 {
   "plugin_name": "NalApps Easy SMTP",
   "slug": "nalapps-easy-smtp",
-  "description": "WordPress 메일 발송을 위한 안전하고 간단한 SMTP 설정, 진단, 시험 발송 도구",
-  "plugin_version": "1.0.0",
+  "description": "WordPress 메일 발송을 위한 안전하고 간단한 SMTP/API 설정, 진단, 시험 발송 도구",
+  "plugin_version": "1.1.0",
   "requires_wp": "6.5",
   "requires_php": "8.1",
-  "product_type": "edd_paid",
+  "product_type": "free",
   "frontend": false,
   "database": false,
   "cron": false,
@@ -21,13 +21,17 @@
     "site_options": [],
     "post_types": [],
     "custom_tables": [],
-    "secret_fields": ["nalapps_easy_smtp_settings.password_enc"]
+    "secret_fields": [
+      "nalapps_easy_smtp_settings.password_enc",
+      "nalapps_easy_smtp_settings.api_key_enc"
+    ]
   },
-  "edd_download_id": 533,
-  "edd_store_url": "https://app.nal.la",
-  "plugin_uri": "https://eoingti.com/",
+  "license_required": false,
+  "update_source": "github_releases",
+  "update_repository": "Eoingtilab/nalapps-esay-smtp",
+  "plugin_uri": "https://github.com/Eoingtilab/nalapps-esay-smtp",
   "support_uri": null,
-  "update_uri": "https://app.nal.la/",
+  "update_uri": "https://github.com/Eoingtilab/nalapps-esay-smtp",
   "license": "GPLv2 or later",
   "license_uri": "https://www.gnu.org/licenses/gpl-2.0.html",
   "requires_plugins": []

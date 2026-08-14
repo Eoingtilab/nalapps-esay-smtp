@@ -1,17 +1,10 @@
 {
   "name": "eoingtilab/nalapps-easy-smtp",
-  "description": "NalApps Easy SMTP for WordPress",
+  "description": "NalApps Easy SMTP for WordPress (free product)",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/awesomemotive/edd-sl-sdk"
-    }
-  ],
   "require": {
-    "php": ">=8.1",
-    "easy-digital-downloads/edd-sl-sdk": "^1.0.2"
+    "php": ">=8.1"
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^1.0",

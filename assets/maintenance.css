@@ -40,3 +40,22 @@
 	.nes-local-backup-row{align-items:stretch}
 	.nes-local-backup-row code{width:100%;flex:0 0 auto;min-height:auto;padding:10px}
 }
+
+/* Mail provider quick-setup (Smtp::render) */
+.nes-provider-step{margin:18px 0;padding-top:18px;border-top:1px solid #eef1f6}
+.nes-provider-step:first-of-type{border-top:none;padding-top:0}
+.nes-step-label{display:block;font-weight:650;font-size:13px;color:var(--nalapps-text);margin-bottom:10px}
+.nes-provider-grid{display:flex;flex-wrap:wrap;gap:10px}
+.nes-provider-card{display:flex;align-items:center;gap:8px;padding:10px 16px;border:1px solid #dbe1ea;border-radius:10px;background:#fff;cursor:pointer;font-size:13px;font-weight:550;color:var(--nalapps-text)}
+.nes-provider-card:hover{border-color:var(--nalapps-primary)}
+.nes-provider-card.is-selected{border-color:var(--nalapps-primary);background:#eff6ff;color:var(--nalapps-primary)}
+.nes-provider-index{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#eef1f6;font-size:11px;font-weight:650}
+.nes-provider-card.is-selected .nes-provider-index{background:var(--nalapps-primary);color:#fff}
+.nes-provider-select-row{margin-top:12px;flex-wrap:wrap}
+.nalapps-radio-pills{display:flex;flex-wrap:wrap;gap:10px}
+.nalapps-radio-pills label{display:flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid #dbe1ea;border-radius:999px;font-size:13px;cursor:pointer}
+.nalapps-radio-pills input:checked + *,
+.nalapps-radio-pills label:has(input:checked){border-color:var(--nalapps-primary);background:#eff6ff;color:var(--nalapps-primary)}
+.nes-mode-smtp.is-hidden,
+.nes-mode-api.is-hidden,
+.nes-field-mailgun-domain.is-hidden{display:none}

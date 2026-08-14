@@ -32,7 +32,7 @@ class Data_Portability {
 
 	public static function build_payload() {
 		$settings = Smtp::settings();
-		unset( $settings['password_enc'] );
+		unset( $settings['password_enc'], $settings['api_key_enc'] );
 
 		return array(
 			'format'           => self::FORMAT,
@@ -41,7 +41,7 @@ class Data_Portability {
 			'standard_version' => NES_STANDARD_VERSION,
 			'created_at'       => gmdate( 'c' ),
 			'data'             => array( 'settings' => $settings ),
-			'notes'            => 'SMTP 비밀번호는 이 사이트에서만 해독 가능하게 암호화되어 있어 백업 파일에 포함되지 않습니다.',
+			'notes'            => 'SMTP 비밀번호와 API 키는 이 사이트에서만 해독 가능하게 암호화되어 있어 백업 파일에 포함되지 않습니다.',
 		);
 	}
 
@@ -124,8 +124,9 @@ class Data_Portability {
 
 		$current  = Smtp::settings();
 		$imported = $payload['data']['settings'];
-		unset( $imported['password_enc'] );
+		unset( $imported['password_enc'], $imported['api_key_enc'] );
 		$imported['password_enc'] = $current['password_enc'];
+		$imported['api_key_enc']  = $current['api_key_enc'];
 		update_option( Smtp::OPTION_KEY, wp_parse_args( $imported, $current ), false );
 
 		$this->redirect( 'imported' );

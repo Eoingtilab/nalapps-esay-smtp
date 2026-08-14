@@ -8,7 +8,7 @@ Before proposing a change:
 - Use the `NES` namespace/prefix and avoid global identifiers.
 - Require capability + nonce for state-changing admin actions.
 - Validate/sanitize input and escape output by context.
-- Never include the SMTP password in exports, snapshots, system information, or logs.
+- Never include the SMTP password or API key in exports, snapshots, system information, or logs.
 - Do not commit credentials, license keys, customer data, backups, dumps, or real `.env` values.
 - Keep telemetry off unless an explicit opt-in design is approved.
 - Keep remote calls bounded by timeout, SSL verification, validation, and cache policy.

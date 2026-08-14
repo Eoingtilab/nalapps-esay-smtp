@@ -49,15 +49,15 @@ class NalApps_Admin_UI {
 		$this->header_rendered = true;
 		$page                  = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$active                = 'dashboard';
-		$title                 = 'SMTP 설정';
-		$description           = 'SMTP 서버 연결 정보를 등록하고 테스트 메일을 보내 발송 상태를 확인합니다.';
+		$title                 = '메일 설정';
+		$description           = '메일 서비스를 선택해 SMTP 또는 API 키로 연결하고, 테스트 메일로 발송 상태를 확인합니다.';
 		$action_url            = admin_url( 'admin.php?page=nes-update' );
 		$action_text           = '업데이트';
 
 		if ( 'nes-license' === $page ) {
 			$active      = 'license';
 			$title       = '라이선스';
-			$description = '구매한 시리얼키를 등록·활성화하고 현재 라이선스 상태를 확인합니다.';
+			$description = '무료 제품 상태를 확인합니다. 시리얼키 등록이 필요하지 않습니다.';
 			$action_url  = admin_url( 'admin.php?page=nes-update' );
 			$action_text = '업데이트';
 		} elseif ( 'nes-update' === $page ) {
@@ -87,7 +87,7 @@ class NalApps_Admin_UI {
 					<span class="nalapps-brand__text"><strong>NalApps Easy SMTP</strong><small>NalApps WordPress Plugin Standard v<?php echo esc_html( NES_STANDARD_VERSION ); ?></small></span>
 				</div>
 				<nav class="nalapps-nav" aria-label="간편 SMTP 관리 메뉴">
-					<a class="<?php echo 'dashboard' === $active ? 'is-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'admin.php?page=nes-easy-smtp-dashboard' ) ); ?>">SMTP 설정</a>
+					<a class="<?php echo 'dashboard' === $active ? 'is-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'admin.php?page=nes-easy-smtp-dashboard' ) ); ?>">메일 설정</a>
 					<a class="<?php echo 'license' === $active ? 'is-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'admin.php?page=nes-license' ) ); ?>">라이선스</a>
 					<a class="<?php echo 'update' === $active ? 'is-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'admin.php?page=nes-update' ) ); ?>">업데이트</a>
 					<a class="<?php echo 'maintenance' === $active ? 'is-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'admin.php?page=nes-maintenance' ) ); ?>">백업 및 복구</a>

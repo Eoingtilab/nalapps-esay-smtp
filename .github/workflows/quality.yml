@@ -35,6 +35,7 @@ jobs:
           test -f includes/class-crypto.php
           test -f includes/class-smtp.php
           test -f includes/class-license.php
+          test -f includes/class-mail-api.php
           test -f includes/class-update-manager.php
           test -f includes/class-data-portability.php
           test -f includes/class-rollback-manager.php
@@ -43,17 +44,24 @@ jobs:
           test -f includes/class-nalapps-admin-ui.php
           test -f assets/nalapps-admin-ui.css
           test -f assets/maintenance.css
+          test -f assets/smtp-settings.js
           test -f uninstall.php
           grep -q '"standard_version": "4.6.0"' nalapps-standard-manifest.json
           grep -q "OPTION_KEY = 'nalapps_easy_smtp_settings'" includes/class-smtp.php
           grep -q 'password_enc' includes/class-crypto.php includes/class-smtp.php
-          grep -q 'activate_license' includes/class-license.php
-          grep -q 'check_license' includes/class-license.php
-          grep -q 'deactivate_license' includes/class-license.php
-          grep -q 'nalapps-form-stack' includes/class-license.php
+          grep -q 'api_key_enc' includes/class-crypto.php includes/class-smtp.php includes/class-mail-api.php
+          grep -q "PROVIDERS = array" includes/class-smtp.php
+          grep -q "'brevo'" includes/class-smtp.php
+          grep -q "'mailgun'" includes/class-smtp.php
+          grep -q "'sendgrid'" includes/class-smtp.php
+          grep -q "pre_wp_mail" includes/class-mail-api.php
+          grep -q "무료" includes/class-license.php
+          if grep -qE "activate_license|SDK_KEY_OPTION|SDK_STATUS_OPTION" includes/class-license.php; then echo 'license screen must stay a free/no-key display'; exit 1; fi
           grep -q '지금 업데이트' includes/class-update-manager.php
           grep -q "add_submenu_page( 'nes-easy-smtp-dashboard', '업데이트', '업데이트', 'manage_options'" includes/class-update-manager.php
           grep -q "current_user_can( 'update_plugins' )" includes/class-update-manager.php
+          grep -q "api.github.com/repos/Eoingtilab/nalapps-esay-smtp/releases/latest" includes/class-update-manager.php
+          if grep -qE "edd_action|EDD_ITEM_ID" includes/class-update-manager.php; then echo 'updater must not depend on EDD'; exit 1; fi
           if grep -q 'nes_release_rollback' includes/class-update-manager.php; then echo 'rollback controls must not render on Update Center'; exit 1; fi
           grep -q '버전 롤백' includes/class-maintenance.php
           grep -q 'nes_release_rollback' includes/class-maintenance.php
@@ -66,13 +74,17 @@ jobs:
           grep -q 'nes_release_rollback' includes/class-rollback-manager.php
           grep -q 'browser_download_url' includes/class-rollback-manager.php
           grep -q 'password_enc' includes/class-data-portability.php
-          grep -q "unset( \$settings\['password_enc'\] )" includes/class-data-portability.php
+          grep -q "unset( \$settings\['password_enc'\], \$settings\['api_key_enc'\] )" includes/class-data-portability.php
           grep -q 'nes_export_data' includes/class-data-portability.php
           grep -q 'nes_import_data' includes/class-data-portability.php
           grep -q 'nalapps-maintenance-row' includes/class-maintenance.php
           grep -q 'nalapps-has-global-header' includes/class-license.php
           grep -q 'nalapps-has-global-header' includes/class-update-manager.php
           grep -q 'nalapps-has-global-header' includes/class-maintenance.php
+          grep -q 'nalapps-switch' includes/class-smtp.php
+          if grep -qE '<input[^>]+type="checkbox"[^>]+name="enabled"' includes/class-smtp.php; then
+            grep -q 'nalapps-switch"><input type="checkbox" name="enabled"' includes/class-smtp.php
+          fi
           grep -q 'Canonical NalApps Admin UI adapter' includes/class-nalapps-admin-ui.php
           grep -q -- '--nalapps-primary:' assets/nalapps-admin-ui.css
           grep -q -- '.nalapps-panel' assets/nalapps-admin-ui.css

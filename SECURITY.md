@@ -16,7 +16,7 @@ If a security report requires sensitive evidence, contact EOINGTI Lab through a 
 ## Security baseline
 
 - State-changing admin actions require capability and nonce checks.
-- The SMTP password is stored encrypted with a key derived from this site's `wp_salt( 'auth' )` and is never included in settings exports, snapshots, system information, or logs.
+- The SMTP password and API key are stored encrypted with a key derived from this site's `wp_salt( 'auth' )` and are never included in settings exports, snapshots, system information, or logs. NalApps Easy SMTP is free and does not require a license key.
 - Remote license and update requests use HTTPS with certificate verification and bounded timeouts.
 - Distribution ZIPs are built by GitHub Actions and include required production dependencies.
 - Existing release tags/assets are treated as immutable.

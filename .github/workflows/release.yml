@@ -98,9 +98,11 @@ jobs:
           grep -q "\"plugin_version\": \"$version\"" plugin-profile.json
           grep -q '"standard_version": "4.6.0"' nalapps-standard-manifest.json
           grep -q "OPTION_KEY = 'nalapps_easy_smtp_settings'" includes/class-smtp.php
-          grep -q 'activate_license' includes/class-license.php
-          grep -q 'nalapps-form-stack' includes/class-license.php
+          grep -q "무료" includes/class-license.php
+          if grep -qE "activate_license|SDK_KEY_OPTION|SDK_STATUS_OPTION" includes/class-license.php; then echo 'license screen must stay a free/no-key display'; exit 1; fi
           grep -q '지금 업데이트' includes/class-update-manager.php
+          grep -q "api.github.com/repos/Eoingtilab/nalapps-esay-smtp/releases/latest" includes/class-update-manager.php
+          if grep -qE "edd_action|EDD_ITEM_ID" includes/class-update-manager.php; then echo 'updater must not depend on EDD'; exit 1; fi
           if grep -q 'nes_release_rollback' includes/class-update-manager.php; then echo 'rollback controls must not render on Update Center'; exit 1; fi
           grep -q '버전 롤백' includes/class-maintenance.php
           grep -q 'Rollback_Manager::list_release_versions' includes/class-maintenance.php
@@ -112,9 +114,11 @@ jobs:
           grep -q 'list_release_versions' includes/class-rollback-manager.php
           grep -q 'nes_release_rollback' includes/class-rollback-manager.php
           grep -q 'browser_download_url' includes/class-rollback-manager.php
-          grep -q "unset( \$settings\['password_enc'\] )" includes/class-data-portability.php
+          grep -q "unset( \$settings\['password_enc'\], \$settings\['api_key_enc'\] )" includes/class-data-portability.php
           grep -q 'nes_export_data' includes/class-data-portability.php
           grep -q 'nalapps-maintenance-row' includes/class-maintenance.php
+          grep -q 'pre_wp_mail' includes/class-mail-api.php
+          grep -q 'nalapps-switch' includes/class-smtp.php
           grep -q 'Canonical NalApps Admin UI adapter' includes/class-nalapps-admin-ui.php
           grep -q 'delete_all' uninstall.php
           test -f assets/nalapps-admin-ui.css
@@ -139,13 +143,14 @@ jobs:
           rsync -a ./ build/nalapps-easy-smtp/ \
             --exclude '.git/' --exclude '.github/' --exclude 'build/' --exclude 'tests/' \
             --exclude '*.zip' --exclude 'phpcs.xml.dist'
-          test -f build/nalapps-easy-smtp/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sdk.php
           test -f build/nalapps-easy-smtp/includes/class-license.php
+          test -f build/nalapps-easy-smtp/includes/class-mail-api.php
           test -f build/nalapps-easy-smtp/includes/class-maintenance.php
           test -f build/nalapps-easy-smtp/includes/class-data-portability.php
           test -f build/nalapps-easy-smtp/includes/class-rollback-manager.php
           test -f build/nalapps-easy-smtp/includes/class-nalapps-admin-ui.php
           test -f build/nalapps-easy-smtp/assets/nalapps-admin-ui.css
+          test -f build/nalapps-easy-smtp/assets/smtp-settings.js
           test -f build/nalapps-easy-smtp/uninstall.php
           cd build
           zip -qr "nalapps-easy-smtp-$version.zip" nalapps-easy-smtp
