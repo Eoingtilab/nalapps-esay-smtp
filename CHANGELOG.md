@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+- 테스트 메일 발송이 `pre_wp_mail`에서 `WP_Error`를 반환받고도 성공으로 표시되던 버그 수정 (`is_wp_error()`/`true === $sent` 기준으로 정확히 판정)
+- Mail_Api API 발송 실패 시 제공자 응답 본문에서 오류 메시지를 추출해 화면에 함께 표시
+
 ## 1.1.0
 - Brevo / Mailgun / SendGrid 빠른 설정(로고 선택 또는 드롭다운) 및 가입 바로가기 링크 추가
 - SMTP 계정 또는 API 키 연결 방식을 선택할 수 있는 기능 추가 (Brevo/Mailgun/SendGrid HTTP API 발송 지원, `pre_wp_mail` 필터 기반)

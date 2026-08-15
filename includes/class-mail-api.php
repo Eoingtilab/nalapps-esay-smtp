@@ -145,9 +145,30 @@ class Mail_Api {
 		}
 		$code = wp_remote_retrieve_response_code( $response );
 		if ( $code < 200 || $code >= 300 ) {
-			return new \WP_Error( 'nes_api_send_failed', 'API 발송 서버가 오류를 반환했습니다. (HTTP ' . (int) $code . ')' );
+			$detail = $this->extract_error_detail( wp_remote_retrieve_body( $response ) );
+			$message = 'API 발송 서버가 오류를 반환했습니다. (HTTP ' . (int) $code . ')';
+			if ( '' !== $detail ) {
+				$message .= ' - ' . $detail;
+			}
+			return new \WP_Error( 'nes_api_send_failed', $message );
 		}
 		return true;
+	}
+
+	private function extract_error_detail( $raw_body ) {
+		$data = json_decode( (string) $raw_body, true );
+		if ( ! is_array( $data ) ) {
+			return mb_substr( wp_strip_all_tags( (string) $raw_body ), 0, 200 );
+		}
+		foreach ( array( 'message', 'Message', 'error', 'error_description' ) as $key ) {
+			if ( ! empty( $data[ $key ] ) && is_string( $data[ $key ] ) ) {
+				return mb_substr( $data[ $key ], 0, 200 );
+			}
+		}
+		if ( ! empty( $data['errors'][0]['message'] ) ) {
+			return mb_substr( (string) $data['errors'][0]['message'], 0, 200 );
+		}
+		return '';
 	}
 
 	private function normalize_recipients( $to ) {

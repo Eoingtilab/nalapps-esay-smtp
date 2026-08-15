@@ -279,8 +279,23 @@ class Smtp {
 		if ( ! is_email( $to ) ) {
 			$this->redirect( '올바른 테스트 이메일 주소를 입력해 주세요.' );
 		}
+
+		$last_error = null;
+		$capture    = static function ( $error ) use ( &$last_error ) {
+			$last_error = $error;
+		};
+		add_action( 'wp_mail_failed', $capture );
 		$sent = wp_mail( $to, '[NalApps] 메일 발송 테스트', '날라앱스 간편 SMTP 테스트 메일입니다.' );
-		$this->redirect( $sent ? '테스트 메일을 발송했습니다.' : '테스트 메일 발송에 실패했습니다. 설정을 확인해 주세요.' );
+		remove_action( 'wp_mail_failed', $capture );
+
+		if ( is_wp_error( $sent ) ) {
+			$this->redirect( '테스트 메일 발송에 실패했습니다: ' . $sent->get_error_message() );
+		} elseif ( true === $sent ) {
+			$this->redirect( '테스트 메일을 발송했습니다.' );
+		} else {
+			$detail = ( $last_error instanceof \WP_Error ) ? ' (' . $last_error->get_error_message() . ')' : '';
+			$this->redirect( '테스트 메일 발송에 실패했습니다. 설정을 확인해 주세요.' . $detail );
+		}
 	}
 
 	public function configure_mailer( $phpmailer ): void {

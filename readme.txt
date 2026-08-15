@@ -4,7 +4,7 @@ Tags: smtp, email, mail, phpmailer, deliverability
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,10 @@ NalApps Easy SMTP는 WordPress의 기본 메일 발송(wp_mail)이 신뢰할 수
 
 == Changelog ==
 
+= 1.1.1 =
+* 테스트 메일/API 키 발송 실패 시 "발송했습니다"로 잘못 표시되던 버그 수정 (pre_wp_mail이 WP_Error를 반환하면 실패로 정확히 처리)
+* API 발송 실패 시 제공자(Brevo/Mailgun/SendGrid) 응답 메시지를 화면에 함께 표시하여 원인 파악이 쉬워짐
+
 = 1.1.0 =
 * Brevo/Mailgun/SendGrid 빠른 설정(로고 선택/드롭다운) 및 가입 바로가기 추가
 * SMTP 계정 또는 API 키 연결 방식 선택 기능 추가 (Brevo/Mailgun/SendGrid API 발송 지원)
@@ -73,6 +77,9 @@ NalApps Easy SMTP는 WordPress의 기본 메일 발송(wp_mail)이 신뢰할 수
 * 제품 자체 라이선스, 하이브리드 업데이트, 롤백, 데이터 백업/복원, 시스템 정보 추가
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+API 키 모드 발송 실패가 "성공"으로 잘못 표시되던 버그를 수정했습니다. Brevo/Mailgun/SendGrid를 API 키로 연결하신 분은 업데이트를 권장합니다.
 
 = 1.1.0 =
 무료 전환 업데이트입니다. 라이선스 등록 없이 계속 사용할 수 있으며, 기존
