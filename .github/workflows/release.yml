@@ -93,13 +93,19 @@ jobs:
           vendor/bin/phpcs --standard=phpcs.xml.dist
           version="${{ steps.version.outputs.version }}"
           grep -Eq "define\( *'NES_VERSION', *'$version' *\);" nalapps-easy-smtp.php
-          grep -Eq "define\( *'NES_STANDARD_VERSION', *'4\.6\.0' *\);" nalapps-easy-smtp.php
+          grep -Eq "define\( *'NES_STANDARD_VERSION', *'4\.7\.0' *\);" nalapps-easy-smtp.php
           grep -q "Stable tag: $version" readme.txt
           grep -q "\"plugin_version\": \"$version\"" plugin-profile.json
-          grep -q '"standard_version": "4.6.0"' nalapps-standard-manifest.json
+          grep -q '"license_mode": "free_download"' plugin-profile.json
+          grep -q '"license_required": false' plugin-profile.json
+          grep -q '"standard_version": "4.7.0"' nalapps-standard-manifest.json
+          grep -q '"license_mode": "free_download"' nalapps-standard-manifest.json
+          grep -q 'free_download_license_always_active' nalapps-standard-manifest.json
           grep -q "OPTION_KEY = 'nalapps_easy_smtp_settings'" includes/class-smtp.php
           grep -q "무료" includes/class-license.php
-          if grep -qE "activate_license|SDK_KEY_OPTION|SDK_STATUS_OPTION" includes/class-license.php; then echo 'license screen must stay a free/no-key display'; exit 1; fi
+          grep -q "활성" includes/class-license.php
+          grep -q "return true" includes/class-license.php
+          if grep -qE "activate_license|SDK_KEY_OPTION|SDK_STATUS_OPTION|Serial key" includes/class-license.php; then echo 'free_download license screen must stay always-active and keyless'; exit 1; fi
           grep -q '지금 업데이트' includes/class-update-manager.php
           grep -q "api.github.com/repos/Eoingtilab/nalapps-esay-smtp/releases/latest" includes/class-update-manager.php
           if grep -qE "edd_action|EDD_ITEM_ID" includes/class-update-manager.php; then echo 'updater must not depend on EDD'; exit 1; fi
