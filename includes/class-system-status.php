@@ -38,24 +38,24 @@ class System_Status {
 		$settings = Smtp::settings();
 		$provider = array_key_exists( $settings['provider'], Smtp::PROVIDERS ) ? Smtp::PROVIDERS[ $settings['provider'] ]['label'] : $settings['provider'];
 		return array(
-			'플러그인 버전'      => NES_VERSION,
+			'플러그인 버전'          => NES_VERSION,
 			'NalApps Standard' => NES_STANDARD_VERSION,
 			'WordPress'        => get_bloginfo( 'version' ),
 			'PHP'              => PHP_VERSION,
 			'Locale'           => get_locale(),
 			'HTTPS'            => is_ssl() ? '예' : '아니오',
 			'Multisite'        => is_multisite() ? '예' : '아니오',
-			'메일 발송 사용'       => ! empty( $settings['enabled'] ) ? '켬' : '끔',
-			'연결 방식'          => 'api' === $settings['connection_mode'] ? 'API 키' : 'SMTP',
-			'선택된 서비스'        => $provider,
-			'SMTP 암호화'        => strtoupper( (string) $settings['encryption'] ),
-			'라이선스 상태'        => '무료 (활성)',
-			'마지막 업데이트 확인'    => (string) get_option( 'nes_update_last_checked', '확인 기록 없음' ),
-			'롤백 코드 백업'       => (string) count( Rollback_Manager::list_backups() ),
-			'설정 스냅샷'         => (string) count( Data_Portability::list_snapshots() ),
-			'제거 시 데이터 삭제'    => 'delete_all' === get_option( Maintenance::POLICY_OPTION, 'preserve' ) ? 'ON' : 'OFF',
-			'업데이트 소스'        => NES_STORE_URL,
-			'Telemetry'       => 'OFF',
+			'메일 발송 사용'         => ! empty( $settings['enabled'] ) ? '켬' : '끔',
+			'연결 방식'            => 'api' === $settings['connection_mode'] ? 'API 키' : 'SMTP',
+			'선택된 서비스'          => $provider,
+			'SMTP 암호화'         => strtoupper( (string) $settings['encryption'] ),
+			'라이선스 상태'          => '무료 (활성)',
+			'마지막 업데이트 확인'      => (string) get_option( 'nes_update_last_checked', '확인 기록 없음' ),
+			'롤백 코드 백업'         => (string) count( Rollback_Manager::list_backups() ),
+			'설정 스냅샷'           => (string) count( Data_Portability::list_snapshots() ),
+			'제거 시 데이터 삭제'      => 'delete_all' === get_option( Maintenance::POLICY_OPTION, 'preserve' ) ? 'ON' : 'OFF',
+			'업데이트 소스'          => NES_STORE_URL,
+			'Telemetry'        => 'OFF',
 		);
 	}
 
