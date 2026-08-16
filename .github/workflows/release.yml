@@ -253,7 +253,7 @@ jobs:
 
       - name: Upload verified install package
         if: steps.version.outputs.needs_assets == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nalapps-easy-smtp-${{ steps.version.outputs.version }}-install-package
           path: |
