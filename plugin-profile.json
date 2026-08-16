@@ -6,6 +6,8 @@
   "requires_wp": "6.5",
   "requires_php": "8.1",
   "product_type": "free",
+  "license_mode": "free_download",
+  "license_required": false,
   "frontend": false,
   "database": false,
   "cron": false,
@@ -26,7 +28,6 @@
       "nalapps_easy_smtp_settings.api_key_enc"
     ]
   },
-  "license_required": false,
   "update_source": "github_releases",
   "update_repository": "Eoingtilab/nalapps-esay-smtp",
   "plugin_uri": "https://github.com/Eoingtilab/nalapps-esay-smtp",
