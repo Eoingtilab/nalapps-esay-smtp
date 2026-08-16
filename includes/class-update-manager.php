@@ -11,8 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * No license key is required.
  */
 class Update_Manager {
-	const CACHE_KEY   = 'nes_github_version_info';
-	const CACHE_TTL   = 6 * HOUR_IN_SECONDS;
+	const CACHE_KEY    = 'nes_github_version_info';
+	const CACHE_TTL    = 6 * HOUR_IN_SECONDS;
 	const RELEASES_API = 'https://api.github.com/repos/Eoingtilab/nalapps-esay-smtp/releases/latest';
 
 	public function __construct() {
@@ -212,8 +212,8 @@ class Update_Manager {
 			return new \WP_Error( 'nes_update_json', 'GitHub Release 응답을 해석할 수 없습니다.' );
 		}
 
-		$version = ltrim( sanitize_text_field( (string) $release['tag_name'] ), 'vV' );
-		$package = '';
+		$version        = ltrim( sanitize_text_field( (string) $release['tag_name'] ), 'vV' );
+		$package        = '';
 		$expected_asset = 'nalapps-easy-smtp-' . $version . '.zip';
 		if ( ! empty( $release['assets'] ) && is_array( $release['assets'] ) ) {
 			foreach ( $release['assets'] as $asset ) {
