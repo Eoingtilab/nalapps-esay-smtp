@@ -225,7 +225,9 @@ class Smtp {
 	}
 
 	public function save(): void {
-		$this->guard_action( 'nes_save_smtp' );
+		$this->guard_page();
+		check_admin_referer( 'nes_save_smtp' );
+
 		$current    = self::settings();
 		$password   = isset( $_POST['password'] ) ? (string) wp_unslash( $_POST['password'] ) : '';
 		$api_key    = isset( $_POST['api_key'] ) ? (string) wp_unslash( $_POST['api_key'] ) : '';
@@ -274,7 +276,9 @@ class Smtp {
 	}
 
 	public function send_test(): void {
-		$this->guard_action( 'nes_send_test' );
+		$this->guard_page();
+		check_admin_referer( 'nes_send_test' );
+
 		$to = isset( $_POST['test_email'] ) ? sanitize_email( wp_unslash( $_POST['test_email'] ) ) : '';
 		if ( ! is_email( $to ) ) {
 			$this->redirect( '올바른 테스트 이메일 주소를 입력해 주세요.' );
@@ -304,6 +308,8 @@ class Smtp {
 			return;
 		}
 		$phpmailer->isSMTP();
+		// PHPMailer exposes fixed public property names; these are external API identifiers, not local variable names.
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		$phpmailer->Host       = $settings['host'];
 		$phpmailer->Port       = $settings['port'];
 		$phpmailer->SMTPAuth   = '' !== $settings['username'];
@@ -313,6 +319,7 @@ class Smtp {
 		$phpmailer->From       = $settings['from_email'];
 		$phpmailer->FromName   = $settings['from_name'];
 		$phpmailer->Timeout    = 15;
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 	}
 
 	public static function settings(): array {
@@ -331,7 +338,7 @@ class Smtp {
 			'from_email'      => get_option( 'admin_email', '' ),
 			'from_name'       => get_bloginfo( 'name' ),
 		);
-		$value = get_option( self::OPTION_KEY, array() );
+		$value    = get_option( self::OPTION_KEY, array() );
 		return wp_parse_args( is_array( $value ) ? $value : array(), $defaults );
 	}
 
@@ -339,11 +346,6 @@ class Smtp {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( '이 화면에 접근할 권한이 없습니다.', 'nalapps-easy-smtp' ) );
 		}
-	}
-
-	private function guard_action( string $action ): void {
-		$this->guard_page();
-		check_admin_referer( $action );
 	}
 
 	private function redirect( string $message ): void {

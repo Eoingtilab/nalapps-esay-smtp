@@ -14,10 +14,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Prepare canonical plugin directory
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf build/plugin-check
+          mkdir -p build/plugin-check/nalapps-easy-smtp
+          rsync -a ./ build/plugin-check/nalapps-easy-smtp/ \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude 'build/' \
+            --exclude 'vendor/' \
+            --exclude 'tests/' \
+            --exclude '*.zip' \
+            --exclude 'phpcs.xml.dist'
+          test -f build/plugin-check/nalapps-easy-smtp/nalapps-easy-smtp.php
       - name: Official WordPress Plugin Check
         uses: wordpress/plugin-check-action@v1
         with:
-          build-dir: './'
+          build-dir: './build/plugin-check/nalapps-easy-smtp'
           categories: |
             security
             performance

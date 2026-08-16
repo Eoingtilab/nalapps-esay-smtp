@@ -86,12 +86,12 @@ class Mail_Api {
 					),
 				),
 			),
-			'from'              => array(
+			'from'             => array(
 				'email' => $settings['from_email'],
 				'name'  => $settings['from_name'],
 			),
-			'subject'           => $subject,
-			'content'           => array(
+			'subject'          => $subject,
+			'content'          => array(
 				array(
 					'type'  => $is_html ? 'text/html' : 'text/plain',
 					'value' => $message,
@@ -114,9 +114,9 @@ class Mail_Api {
 		if ( '' === $domain ) {
 			return new \WP_Error( 'nes_mailgun_domain_missing', 'Mailgun 발신 도메인이 설정되어 있지 않습니다.' );
 		}
-		$region_host = 'eu' === $settings['mailgun_region'] ? 'api.eu.mailgun.net' : 'api.mailgun.net';
-		$from        = '' !== $settings['from_name'] ? $settings['from_name'] . ' <' . $settings['from_email'] . '>' : $settings['from_email'];
-		$body        = array(
+		$region_host                        = 'eu' === $settings['mailgun_region'] ? 'api.eu.mailgun.net' : 'api.mailgun.net';
+		$from                               = '' !== $settings['from_name'] ? $settings['from_name'] . ' <' . $settings['from_email'] . '>' : $settings['from_email'];
+		$body                               = array(
 			'from'    => $from,
 			'to'      => implode( ',', $to ),
 			'subject' => $subject,
@@ -145,7 +145,7 @@ class Mail_Api {
 		}
 		$code = wp_remote_retrieve_response_code( $response );
 		if ( $code < 200 || $code >= 300 ) {
-			$detail = $this->extract_error_detail( wp_remote_retrieve_body( $response ) );
+			$detail  = $this->extract_error_detail( wp_remote_retrieve_body( $response ) );
 			$message = 'API 발송 서버가 오류를 반환했습니다. (HTTP ' . (int) $code . ')';
 			if ( '' !== $detail ) {
 				$message .= ' - ' . $detail;
