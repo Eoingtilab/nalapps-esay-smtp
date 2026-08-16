@@ -2,7 +2,7 @@
   "plugin_name": "NalApps Easy SMTP",
   "slug": "nalapps-easy-smtp",
   "description": "WordPress 메일 발송을 위한 안전하고 간단한 SMTP/API 설정, 진단, 시험 발송 도구",
-  "plugin_version": "1.1.1",
+  "plugin_version": "1.1.2",
   "requires_wp": "6.5",
   "requires_php": "8.1",
   "product_type": "free",

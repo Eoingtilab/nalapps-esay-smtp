@@ -4,7 +4,7 @@ Tags: smtp, email, mail, phpmailer, deliverability
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,7 +24,7 @@ NalApps Easy SMTP는 WordPress의 기본 메일 발송(wp_mail)이 신뢰할 수
 * 위 3개 서비스 외의 SMTP 서버도 직접 입력으로 자유롭게 설정 가능
 * 저장된 설정으로 즉시 테스트 메일 발송
 * SMTP 비밀번호와 API 키는 이 사이트에서만 해독 가능하도록 암호화되어 저장(사이트 간 이동 불가)
-* 무료 제품: 시리얼키 등록/활성화 절차 없이 모든 기능 사용 가능
+* 무료 다운로드형 제품: 시리얼키 등록/활성화 절차 없이 항상 활성 상태로 모든 기능 사용 가능
 * GitHub Release 기준 업데이트 확인 및 실행형 업데이트
 * 업데이트/롤백 직전 자동 코드·설정 백업, 검증된 이전 Release로 버전 롤백
 * 설정 백업(JSON) 내보내기/가져오기(비밀번호·API 키 제외)
@@ -50,8 +50,8 @@ NalApps Easy SMTP는 WordPress의 기본 메일 발송(wp_mail)이 신뢰할 수
 
 = 라이선스 등록이 필요한가요? =
 
-아니요. 이 플러그인은 완전 무료이며 시리얼키 없이 모든 기능과 업데이트를
-바로 사용할 수 있습니다.
+아니요. 이 플러그인은 무료 다운로드형 제품으로 시리얼키 등록 없이 항상
+활성 상태이며 모든 기능과 업데이트를 바로 사용할 수 있습니다.
 
 = SMTP 계정 없이 API 키만으로 설정할 수 있나요? =
 
@@ -59,6 +59,13 @@ NalApps Easy SMTP는 WordPress의 기본 메일 발송(wp_mail)이 신뢰할 수
 "API 키"를 선택하면 아이디/비밀번호 없이 API 키 하나로 발송할 수 있습니다.
 
 == Changelog ==
+
+= 1.1.2 =
+* NalApps WordPress Plugin Standard 4.7.0의 `free_download` 라이선스 계약 적용
+* 무료 다운로드형 라이선스 상태를 키 입력 없이 항상 활성 상태로 검증하는 품질/릴리스 게이트 추가
+* WordPress Coding Standards 오류를 수정하고 PHP 8.1~8.5 품질 게이트 통과
+* GitHub 저장소명과 플러그인 슬러그 차이로 발생하던 공식 WordPress Plugin Check 경로 문제 수정
+* 검증된 GitHub Release Asset ZIP과 SHA-256 파일을 생성하는 릴리스 파이프라인 복구
 
 = 1.1.1 =
 * 테스트 메일/API 키 발송 실패 시 "발송했습니다"로 잘못 표시되던 버그 수정 (pre_wp_mail이 WP_Error를 반환하면 실패로 정확히 처리)
@@ -77,6 +84,9 @@ NalApps Easy SMTP는 WordPress의 기본 메일 발송(wp_mail)이 신뢰할 수
 * 제품 자체 라이선스, 하이브리드 업데이트, 롤백, 데이터 백업/복원, 시스템 정보 추가
 
 == Upgrade Notice ==
+
+= 1.1.2 =
+무료 다운로드형 라이선스 계약과 릴리스/업데이트 패키지 검증을 정식 표준에 맞춘 안정화 업데이트입니다.
 
 = 1.1.1 =
 API 키 모드 발송 실패가 "성공"으로 잘못 표시되던 버그를 수정했습니다. Brevo/Mailgun/SendGrid를 API 키로 연결하신 분은 업데이트를 권장합니다.

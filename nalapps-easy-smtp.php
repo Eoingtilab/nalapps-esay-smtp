@@ -3,7 +3,7 @@
  * Plugin Name: NalApps Easy SMTP
  * Plugin URI: https://github.com/Eoingtilab/nalapps-esay-smtp
  * Description: WordPress 메일 발송을 위한 안전하고 간단한 SMTP/API 설정, 진단, 시험 발송 도구입니다. 무료로 제공되며 라이선스 등록이 필요하지 않습니다.
- * Version: 1.1.1
+ * Version: 1.1.2
  * Author: Eoingti Lab Inc.
  * Author URI: https://eoingti.com/
  * Text Domain: nalapps-easy-smtp
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'NES_VERSION', '1.1.1' );
+define( 'NES_VERSION', '1.1.2' );
 define( 'NES_STANDARD_VERSION', '4.7.0' );
 define( 'NES_FILE', __FILE__ );
 define( 'NES_PATH', plugin_dir_path( __FILE__ ) );
