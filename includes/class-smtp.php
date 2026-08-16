@@ -289,7 +289,7 @@ class Smtp {
 			$last_error = $error;
 		};
 		add_action( 'wp_mail_failed', $capture );
-		$sent       = wp_mail( $to, '[NalApps] 메일 발송 테스트', '날라앱스 간편 SMTP 테스트 메일입니다.' );
+		$sent = wp_mail( $to, '[NalApps] 메일 발송 테스트', '날라앱스 간편 SMTP 테스트 메일입니다.' );
 		remove_action( 'wp_mail_failed', $capture );
 
 		if ( is_wp_error( $sent ) ) {
@@ -338,7 +338,7 @@ class Smtp {
 			'from_email'      => get_option( 'admin_email', '' ),
 			'from_name'       => get_bloginfo( 'name' ),
 		);
-		$value = get_option( self::OPTION_KEY, array() );
+		$value    = get_option( self::OPTION_KEY, array() );
 		return wp_parse_args( is_array( $value ) ? $value : array(), $defaults );
 	}
 
